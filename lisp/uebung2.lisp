@@ -3,12 +3,11 @@
 ;; value is added to the tree
 
 (defun insert (tree val)
-  (cond (
-        (null tree) (append (list val)))
-        ((< val (first tree)) (append (list (first tree) (second tree) (insert (third tree) val))))
-        ((> val (first tree)) (append (list (first tree) (insert (second tree) val) (third tree))))
-        (T (append (list (first tree) (second tree) (third tree))))
-  )
+    (cond ((null tree) (list val nil nil))
+          ((eql val (first tree))  tree)
+          ((< val (first tree)) (list (first tree) (insert (second tree) val) (third tree)))
+          (t (list (first tree) (second tree) (insert (third tree) val)))
+    )
 )
 
 ;; insert from file
@@ -45,20 +44,20 @@
 ;;getMax tree
 ;; returns the hightest value from the tree
 (defun getMax (tree)
-  (if (endp tree)
-  0
-  (max (first tree) (max (getMax (second tree)) (getMax (third tree))))
-  )
+  (cond 
+	((equal nil (third tree)) tree)
+	(T (getMax (third tree)))
+	)
 )
 
 ;;getMin tree
 ;; returns the min value from the tree
 
 (defun getMin (tree)
-  (if (endp tree)
-  0
-  (min (first tree) (min (getMin (second tree)) (getMin (third tree))))
-  )
+    (cond
+      ((equal nil (second tree)) tree)
+      (T (getMin (second tree)))
+    )
 )
 
 ;; isEmpty tree
@@ -66,6 +65,20 @@
 
 (defun isEmpty (tree)
   (if (null tree) T NIL)
+)
+
+;; addAll
+;; adds a tree into another tree
+(defun addAll (tree otherTree)
+    (cond
+      ((null otherTree) tree)
+      ((null tree) otherTree)
+      (t
+        (setq tree (insert tree (first otherTree)))
+        (setq tree (addAll tree (second  otherTree)))
+        (setq tree (addAll tree (third otherTree)))
+      )
+    )
 )
 
 ;; print levelorder
@@ -91,8 +104,12 @@
     )
 )
 
+;; remove 
+;; removes a node from the tree
+
+
 ;; tree for test purposes '(1 (2 (3 4))(5(6)))
 
-(setq tree '(1 (2 (3)(4))(5(6))))
+(setq tree '(5(3 (1) (4))(8 (7) (9))))
 
 (insert tree 9)
